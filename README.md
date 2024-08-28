@@ -4,51 +4,41 @@ This is a demo of how complex A.I. appication can be deployed as microservices o
 
 ```mermaid
 block-beta
-columns 4
-    YOUTUBE:1
-    space
+columns 5
+    YOUTUBE
+    space space 
     block:user:2
-    jmeter/postman:1
-    locust/browser:1
+    columns 3
+        jmeter/postman
+        locust/browser
     end
-    space
-    space
-    space
-    space
-    block:App:4
-    ResizeImage
-    ExtractColor
-    YOLO
-    WebServer
-    PlateCrop
-    OCR
-    Identify
+    space space space space space
+    block:App:5
+    columns 5
+        space space WebServer:1 space space
+        space space space       space space
+        space space Identify:1  space space
+        space space space       space space
+        ResizeImage ExtractColor YOLO PlateCrop OCR
     end
-    space
-    space
-    space
-    space
-    gRPC:4
-    ResizeImage --> gRPC
-    ExtractColor --> gRPC
-    YOLO --> gRPC
-    PlateCrop --> gRPC
-    OCR --> gRPC
-    Identify --> gRPC
-    WebServer --> gRPC
-    gRPC --> ResizeImage
-    gRPC --> ExtractColor
-    gRPC --> YOLO
-    gRPC --> PlateCrop
-    gRPC --> OCR
-    gRPC --> Identify
-    gRPC --> WebServer
     locust/browser --> WebServer
     WebServer --"http"--> locust/browser
     jmeter/postman --> WebServer
     WebServer --"http"--> jmeter/postman
     YOUTUBE --> WebServer
     WebServer --"http"--> YOUTUBE
+    WebServer --> Identify
+    Identify --"gRPC"--> WebServer
+    Identify --> ResizeImage
+    ResizeImage --"gRPC"--> Identify
+    Identify --> ExtractColor
+    ExtractColor --"gRPC"--> Identify
+    Identify --> YOLO
+    YOLO --"gRPC"--> Identify
+    Identify --> PlateCrop
+    PlateCrop --"gRPC"--> Identify
+    Identify --> OCR
+    OCR --"gRPC"--> Identify
 ```
 
 ## Compile and start background services
