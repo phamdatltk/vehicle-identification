@@ -1,0 +1,23 @@
+FROM python:3.11.9-slim-bookworm AS base
+
+RUN apt update -y && apt upgrade -y
+RUN apt install build-essential -y
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
+
+RUN python3 -m pip install --upgrade pip setuptools wheel
+RUN pip install pyyaml grpcio grpcio-tools pillow==9.5.0 mkl-service==2.4.1 numpy webcolors opencv-python --break-system-packages
+
+RUN pip install torch torchvision --break-system-packages
+
+FROM base AS stage1
+
+WORKDIR /usr/run/VehicleIdentification
+
+COPY ./trained_models/wpodnet.pth .
+
+COPY . .
+
+EXPOSE 50053
+EXPOSE 32053
+
+CMD ["python3", "PlateCrop_servicer.py"]

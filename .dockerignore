@@ -1,0 +1,8 @@
+*.log
+*__pycache__*
+data
+config
+.env_dev
+*.pth
+*.pt
+# !wpodnet.pth

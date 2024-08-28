@@ -1,0 +1,9 @@
+syntax="proto2";
+
+package VehicleIdentification.ImgColor;
+
+import 'protos/types.proto';
+
+service ImgColor {
+    rpc GetPrimaryColors(VehicleIdentification.Types.Image) returns (VehicleIdentification.Types.ImgColorsResult);
+}

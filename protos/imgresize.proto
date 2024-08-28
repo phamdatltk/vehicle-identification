@@ -1,0 +1,14 @@
+syntax="proto2";
+
+package VehicleIdentification.ImgResize;
+
+import 'protos/types.proto';
+
+service ImgResize {
+    rpc To480p(VehicleIdentification.Types.Image) returns (VehicleIdentification.Types.Image);
+}
+
+// message Image {
+//     required bytes data = 1;
+//     optional bytes metadata = 2;
+// }

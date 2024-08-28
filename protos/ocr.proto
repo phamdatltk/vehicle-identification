@@ -1,0 +1,14 @@
+syntax="proto2";
+
+package VehicleIdentification.Ocr;
+
+import 'protos/types.proto';
+
+service Ocr {
+    rpc ReadText(VehicleIdentification.Types.Image) returns (VehicleIdentification.Types.OcrResult);
+}
+
+// message Image {
+//     required bytes data = 1;
+//     optional bytes metadata = 2;
+// }

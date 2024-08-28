@@ -1,0 +1,9 @@
+syntax="proto2";
+
+package VehicleIdentification.PlateCrop;
+
+import 'protos/types.proto';
+
+service PlateCrop {
+    rpc Crop(VehicleIdentification.Types.Image) returns (VehicleIdentification.Types.Image);
+}

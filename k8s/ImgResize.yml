@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imgresize-config
+  namespace: j12t-alpha
+data:
+  ImgResizeService.yml: |
+    insecure_ports:
+      - "[::]:32051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicleidentify-imgresize
+  labels:
+    app: vehicleidentify-imgresize
+  namespace: j12t-alpha
+spec:
+  ports:
+  - port: 32051
+    targetPort: 32051
+    # nodePort: 32051
+    name: vehicleidentify-imgresize
+  - port: 9126
+    targetPort: 9126
+    name: telegraf
+  type: NodePort
+  selector:
+    app: vehicleidentify-imgresize
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vehicleidentify-imgresize
+  namespace: j12t-alpha
+spec:
+  selector:
+    matchLabels:
+      app: vehicleidentify-imgresize
+  serviceName: vehicleidentify-imgresize
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vehicleidentify-imgresize
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicleidentify-imgresize
+        image: jerapiblannett/vehicleidentify-imgresize:latest
+        ports:
+        - containerPort: 32051
+        volumeMounts:
+        - name: imgresize-config
+          mountPath: "/usr/run/VehicleIdentification/config"
+      - name: telegraf-agent
+        image: telegraf:1.20
+        ports:
+        - containerPort: 9126
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: "/etc/telegraf"
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: telegraf-config
+          defaultMode: 420
+      - name: imgresize-config
+        configMap:
+          name: imgresize-config
+          defaultMode: 420

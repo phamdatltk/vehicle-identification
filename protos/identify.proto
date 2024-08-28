@@ -1,0 +1,14 @@
+syntax="proto2";
+
+package VehicleIdentification.Identify;
+
+import 'protos/types.proto';
+
+service Identify {
+    rpc Identify(VehicleIdentification.Types.Image) returns (VehicleIdentification.Types.VehicleIdentifyResult);
+}
+
+// message Image {
+//     required bytes data = 1;
+//     optional bytes metadata = 2;
+// }

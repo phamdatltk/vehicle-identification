@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: identify-config
+  namespace: j12t-alpha
+data:
+  IdentifyService.yml: |
+    imgresize_channel: "vehicleidentify-identify.j12t-alpha.svc.cluster.local:32051"
+    yolo_channel: "vehicleidentify-yolo.j12t-alpha.svc.cluster.local:32052"
+    platecrop_channel: "vehicleidentify-platecrop.j12t-alpha.svc.cluster.local:32053"
+    ocr_channel: "vehicleidentify-ocr.j12t-alpha.svc.cluster.local:32054"
+    imgcolor_channel: "vehicleidentify-imgcolor.j12t-alpha.svc.cluster.local:32055"
+
+    insecure_ports:
+      - "[::]:32050"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicleidentify-identify
+  labels:
+    app: vehicleidentify-identify
+  namespace: j12t-alpha
+spec:
+  ports:
+  - port: 32050
+    targetPort: 32050
+    # nodePort: 32050
+    name: vehicleidentify-identify
+  - port: 9126
+    targetPort: 9126
+    name: telegraf
+  type: NodePort
+  selector:
+    app: vehicleidentify-identify
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vehicleidentify-identify
+  namespace: j12t-alpha
+spec:
+  selector:
+    matchLabels:
+      app: vehicleidentify-identify
+  serviceName: vehicleidentify-identify
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vehicleidentify-identify
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicleidentify-identify
+        image: jerapiblannett/vehicleidentify-identify:latest
+        ports:
+        - containerPort: 32050
+        volumeMounts:
+        - name: identify-config
+          mountPath: "/usr/run/VehicleIdentification/config"
+      - name: telegraf-agent
+        image: telegraf:1.20
+        ports:
+        - containerPort: 9126
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: "/etc/telegraf"
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: telegraf-config
+          defaultMode: 420
+      - name: identify-config
+        configMap:
+          name: identify-config
+          defaultMode: 420

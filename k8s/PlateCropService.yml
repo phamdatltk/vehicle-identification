@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platecrop-config
+  namespace: j12t-alpha
+data:
+  PlateCropService.yml: |
+    insecure_ports:
+      - "[::]:32053"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicleidentify-platecrop
+  labels:
+    app: vehicleidentify-platecrop
+  namespace: j12t-alpha
+spec:
+  ports:
+  - port: 32053
+    targetPort: 32053
+    # nodePort: 32053
+    name: vehicleidentify-platecrop
+  - port: 9126
+    targetPort: 9126
+    name: telegraf
+  type: NodePort
+  selector:
+    app: vehicleidentify-platecrop
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vehicleidentify-platecrop
+  namespace: j12t-alpha
+spec:
+  selector:
+    matchLabels:
+      app: vehicleidentify-platecrop
+  serviceName: vehicleidentify-platecrop
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vehicleidentify-platecrop
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicleidentify-platecrop
+        image: jerapiblannett/vehicleidentify-platecrop:latest
+        ports:
+        - containerPort: 32053
+        volumeMounts:
+        - name: platecrop-config
+          mountPath: "/usr/run/VehicleIdentification/config"
+      - name: telegraf-agent
+        image: telegraf:1.20
+        ports:
+        - containerPort: 9126
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: "/etc/telegraf"
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: telegraf-config
+          defaultMode: 420
+      - name: platecrop-config
+        configMap:
+          name: platecrop-config
+          defaultMode: 420

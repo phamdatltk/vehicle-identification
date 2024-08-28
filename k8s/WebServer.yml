@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webserver-config
+  namespace: j12t-alpha
+data:
+  IdentifyService.yml: |
+    host: "0.0.0.0"
+    port: "8080"
+    debug: False
+    threaded: True
+    use_reloader: False
+    identify_channel: "vehicleidentify-identify.j12t-alpha.svc.cluster.local:32050"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicleidentify-webserver
+  labels:
+    app: vehicleidentify-webserver
+  namespace: j12t-alpha
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: vehicleidentify-webserver
+  - port: 9126
+    targetPort: 9126
+    name: telegraf
+  type: NodePort
+  selector:
+    app: vehicleidentify-webserver
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vehicleidentify-webserver
+  namespace: j12t-alpha
+spec:
+  selector:
+    matchLabels:
+      app: vehicleidentify-webserver
+  serviceName: vehicleidentify-webserver
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vehicleidentify-webserver
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicleidentify-webserver
+        image: jerapiblannett/vehicleidentify-webserver:latest
+        ports:
+        - containerPort: 32050
+        volumeMounts:
+        - name: webserver-config
+          mountPath: "/usr/run/VehicleIdentification/config"
+      - name: telegraf-agent
+        image: telegraf:1.20
+        ports:
+        - containerPort: 9126
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: "/etc/telegraf"
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: telegraf-config
+          defaultMode: 420
+      - name: webserver-config
+        configMap:
+          name: webserver-config
+          defaultMode: 420

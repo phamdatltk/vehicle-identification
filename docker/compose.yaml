@@ -1,0 +1,85 @@
+services:
+  imgcolor:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.imgcolor
+      network: host
+    # network_mode: host
+    ports:
+      - 50055:50055
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  imgresize:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.imgresize
+      network: host
+    # network_mode: host
+    ports:
+      - 50051:50051
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  platecrop:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.platecrop
+      network: host
+    # network_mode: host
+    ports:
+      - 50053:50053
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  yolo:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.yolo
+      network: host
+    # network_mode: host
+    ports:
+      - 50052:50052
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  ocr:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.ocr
+      network: host
+    # network_mode: host
+    ports:
+      - 50054:50054
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  identify:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.identify
+      network: host
+    # network_mode: host
+    ports:
+      - 50000:50000
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  webserver:
+    restart: on-failure:5
+    build:
+      context: ..
+      dockerfile: ./docker/dockerfile.webserver
+      network: host
+    # network_mode: host
+    ports:
+      - 8080:8080
+    volumes:
+      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+  # vehicleidentification_main:
+  #   build:
+  #     context: ..
+  #     dockerfile: ./docker/dockerfile.vehicleIdeitification
+  #   volumes:
+  #     - D:\tmp\vehicle-identification:/usr/run/VehicleIdentification/data
+  #   network_mode: host

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ocr-config
+  namespace: j12t-alpha
+data:
+  OcrService.yml: |
+    insecure_ports:
+      - "[::]:32054"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicleidentify-ocr
+  labels:
+    app: vehicleidentify-ocr
+  namespace: j12t-alpha
+spec:
+  ports:
+  - port: 32054
+    targetPort: 32054
+    # nodePort: 32054
+    name: vehicleidentify-ocr
+  - port: 9126
+    targetPort: 9126
+    name: telegraf
+  type: NodePort
+  selector:
+    app: vehicleidentify-ocr
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vehicleidentify-ocr
+  namespace: j12t-alpha
+spec:
+  selector:
+    matchLabels:
+      app: vehicleidentify-ocr
+  serviceName: vehicleidentify-ocr
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vehicleidentify-ocr
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicleidentify-ocr
+        image: jerapiblannett/vehicleidentify-ocr:latest
+        ports:
+        - containerPort: 32054
+        volumeMounts:
+        - name: ocr-config
+          mountPath: "/usr/run/VehicleIdentification/config"
+      - name: telegraf-agent
+        image: telegraf:1.20
+        ports:
+        - containerPort: 9126
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: "/etc/telegraf"
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: telegraf-config
+          defaultMode: 420
+      - name: ocr-config
+        configMap:
+          name: ocr-config
+          defaultMode: 420

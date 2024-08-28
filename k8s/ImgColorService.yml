@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imgcolor-config
+  namespace: j12t-alpha
+data:
+  ImgColorService.yml: |
+    insecure_ports:
+      - "[::]:32055"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicleidentify-imgcolor
+  labels:
+    app: vehicleidentify-imgcolor
+  namespace: j12t-alpha
+spec:
+  ports:
+  - port: 32055
+    targetPort: 32055
+    # nodePort: 32055
+    name: vehicleidentify-imgcolor
+  - port: 9126
+    targetPort: 9126
+    name: telegraf
+  type: NodePort
+  selector:
+    app: vehicleidentify-imgcolor
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vehicleidentify-imgcolor
+  namespace: j12t-alpha
+spec:
+  selector:
+    matchLabels:
+      app: vehicleidentify-imgcolor
+  serviceName: vehicleidentify-imgcolor
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vehicleidentify-imgcolor
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicleidentify-imgcolor
+        image: jerapiblannett/vehicleidentify-imgcolor:latest
+        ports:
+        - containerPort: 32055
+        volumeMounts:
+        - name: imgcolor-config
+          mountPath: "/usr/run/VehicleIdentification/config"
+      - name: telegraf-agent
+        image: telegraf:1.20
+        ports:
+        - containerPort: 9126
+        volumeMounts:
+        - name: telegraf-config
+          mountPath: "/etc/telegraf"
+      volumes:
+      - name: telegraf-config
+        configMap:
+          name: telegraf-config
+          defaultMode: 420
+      - name: imgcolor-config
+        configMap:
+          name: imgcolor-config
+          defaultMode: 420

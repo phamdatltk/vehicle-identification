@@ -1,0 +1,22 @@
+syntax="proto2";
+
+package VehicleIdentification.Yolov8;
+
+import 'protos/types.proto';
+
+service Yolov8 {
+    rpc Detect(VehicleIdentification.Types.Image) returns (VehicleIdentification.Types.DetectResult);
+}
+
+// message Image {
+//     required bytes data = 1;
+//     optional bytes metadata = 2;
+// }
+
+// message DetectInfo {
+//     required repeated int32 x0 = 1 [packed=true];
+//     required repeated int32 x1 = 2 [packed=true];
+//     required repeated int32 y0 = 3 [packed=true];
+//     required repeated int32 y1 = 4 [packed=true];
+//     required repeated string id = 5;
+// }

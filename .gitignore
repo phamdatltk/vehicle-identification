@@ -1,0 +1,8 @@
+*.log
+*__pycache__*
+data
+config
+.env_dev
+*.pth
+*.pt
+!trained_models/*.pth

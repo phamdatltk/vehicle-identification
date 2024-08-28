@@ -1,0 +1,32 @@
+syntax="proto2";
+
+package VehicleIdentification.Types;
+
+message Image {
+    required bytes data = 1;
+    optional bytes metadata = 2;
+}
+
+message Box {
+    required float x0 = 1;
+    required float y0 = 2;
+    required float x1 = 3;
+    required float y1 = 4;
+    optional string id = 5;
+}
+
+message DetectResult {
+    repeated Box boxes = 1;
+}
+
+message OcrResult {
+    repeated string text = 1;
+}
+
+message ImgColorsResult{
+    repeated string text = 1;
+}
+
+message VehicleIdentifyResult{
+    repeated Box vehicles = 1;
+}
