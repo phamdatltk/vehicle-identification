@@ -90,6 +90,7 @@ def feed(src, quality, noskip):
         if frame is None:
             break
         frame = IdentifyImage(frame)
+        start_time = time.time()
         yield b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(cv2.imencode(".jpg", frame)[1]) + b'\r\n'
     capture.stop()
     return
