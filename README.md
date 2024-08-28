@@ -49,8 +49,65 @@ By default, `WebServer` listens at port `8080`
 
 API list:
 
-| Endpoint                                                        | Method | Request content-type | Response content-type                     |
-|-----------------------------------------------------------------|--------|----------------------|-------------------------------------------|
-| /                                                               | GET    | None                 | text/html                                 |
-| /api/identify                                                   | POST   | image/*              | image/png                                 |
-| /stream?url=`{{url}}`&quality=`{{quality}}`&noskip=`{{noskip}}` | GET    | None                 | multipart/x-mixed-replace; boundary=frame |
+| Endpoint                                                                       | Method | Request content-type | Response content-type                     |
+|--------------------------------------------------------------------------------|--------|----------------------|-------------------------------------------|
+| [/](#get-)                                                                     | GET    | None                 | text/html                                 |
+| [/api/identify](#post-apiidentify)                                             | POST   | image/*              | image/png                                 |
+| [/stream?url=`{{url}}`&quality=`{{quality}}`&noskip=`{{noskip}}`](#get-stream) | GET    | None                 | multipart/x-mixed-replace; boundary=frame |
+
+## Sequence diagrams
+
+### `GET: /`
+```mermaid
+sequenceDiagram
+    USER->>+WebServer: GET:/
+    WebServer->>-USER: html_document 
+```
+
+### `POST: /api/identify`
+```mermaid
+sequenceDiagram
+    USER->>+WebServer: POST:/api/identify:image
+    WebServer->>+ImgResize: ResizeImage(image)
+    ImgResize->>-WebServer: image_at_480p
+    WebServer->>+YOLO: FindBoxes(image_at_480p)
+    YOLO->>-WebServer: boxes
+    WebServer->>+WebServer: CropToBoxes(image, boxes)
+    WebServer->>-WebServer: image_boxes
+    WebServer->>+ExtractColor: ExtractColor(image_boxes)
+    ExtractColor->>-WebServer: main_colors
+    WebServer->>+PlateCrop: CropToPlate(image_boxes)
+    PlateCrop->>-WebServer: image_plates
+    WebServer->>+OCR: ReadText(image_plates)
+    OCR->>-WebServer: texts
+    WebServer->>+WebServer: Render(image, boxes, texts)
+    WebServer->>-WebServer: annotated_image
+    WebServer->>-USER: annotated_image
+```
+
+### `GET: /stream`
+```mermaid
+sequenceDiagram
+    USER->>+WebServer: GET:/stream?url={url}&quality={quality}&noskip={noskip}
+    WebServer->>+YOUTUBE: get_video_stream(url)
+    YOUTUBE->>-WebServer: video_stream
+    loop feed
+    WebServer->>+WebServer: get_frame(video_stream)
+    WebServer->>-WebServer: frame
+    WebServer->>+ImgResize: ResizeImage(frame)
+    ImgResize->>-WebServer: frame_at_480p
+    WebServer->>+YOLO: FindBoxes(frame_at_480p)
+    YOLO->>-WebServer: boxes
+    WebServer->>+WebServer: CropToBoxes(frame, boxes)
+    WebServer->>-WebServer: frame_boxes
+    WebServer->>+ExtractColor: ExtractColor(frame_boxes)
+    ExtractColor->>-WebServer: main_colors
+    WebServer->>+PlateCrop: CropToPlate(frame_boxes)
+    PlateCrop->>-WebServer: frame_plates
+    WebServer->>+OCR: ReadText(frame_plates)
+    OCR->>-WebServer: texts
+    WebServer->>+WebServer: Render(frame, boxes, texts)
+    WebServer->>-WebServer: annotated_frame
+    WebServer->>-USER: annotated_frame
+    end
+```

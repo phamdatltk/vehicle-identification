@@ -12,7 +12,7 @@ import numpy as np
 import multiprocessing as mp
 import yaml
 
-from flask import Flask, Response, request, render_template
+from flask import Flask, Response, request, render_template, render_template_string
 from urllib.parse import unquote
 
 import protos.imgresize_pb2_grpc as imgresize_pb2_grpc
@@ -97,15 +97,17 @@ def feed(src, quality, noskip):
 app = Flask(__name__)
 
 homepage_contents = None
-with open("./README.md") as f:
-    # homepage_contents = '\n'.join([s.replace("\n","\ ").replace('`', '\`') for s in f.readlines()])
+with open("./README.md", mode="rt", encoding='utf-8') as f:
     homepage_contents = ''.join(f.readlines())
-# homepage_contents = homepage_contents.replace('"', '\"')
+
+with open("./templates/index.html", mode="rt", encoding='utf-8') as f:
+    homepage_template = ''.join(f.readlines())
+homepage = homepage_template.replace("{"+"{"+"readmecontent"+"}"+"}", homepage_contents)
 
 @app.route("/", methods=["GET"])
 def hello_world():
     return Response(
-        render_template('index.html', readmecontent=homepage_contents), status=200
+        homepage, status=200
     )
     
 @app.route("/api/identify", methods=["POST"])
