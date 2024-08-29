@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vehicleidentify-claim
+  namespace: j12t-alpha
+spec:
+  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: vehicleidentify-volume
+  accessModes:
+    - ReadWriteMany
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vehicleidentify-volume
+spec:
+  capacity:
+    storage: 500Mi
+  volumeMode: Filesystem
+  hostPath:
+    path: /var/vehicleidentify
+  storageClassName: ""
+  persistentVolumeReclaimPolicy: Delete
+  accessModes:
+    - ReadWriteMany
+    - ReadWriteOnce
+  claimRef:
+    name: vehicleidentify-claim
+    namespace: j12t-alpha

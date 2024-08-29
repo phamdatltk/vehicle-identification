@@ -6,10 +6,14 @@ services:
       dockerfile: ./docker/dockerfile.imgcolor
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./log/imgcolor.log
     ports:
       - 50055:50055
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   imgresize:
     restart: on-failure:5
     build:
@@ -17,10 +21,14 @@ services:
       dockerfile: ./docker/dockerfile.imgresize
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./log/imgresize.log
     ports:
       - 50051:50051
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   platecrop:
     restart: on-failure:5
     build:
@@ -28,10 +36,14 @@ services:
       dockerfile: ./docker/dockerfile.platecrop
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./log/platecrop.log
     ports:
       - 50053:50053
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   yolo:
     restart: on-failure:5
     build:
@@ -39,10 +51,14 @@ services:
       dockerfile: ./docker/dockerfile.yolo
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./log/yolo.log
     ports:
       - 50052:50052
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   ocr:
     restart: on-failure:5
     build:
@@ -50,10 +66,14 @@ services:
       dockerfile: ./docker/dockerfile.ocr
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./ocr.log
     ports:
       - 50054:50054
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   identify:
     restart: on-failure:5
     build:
@@ -61,10 +81,14 @@ services:
       dockerfile: ./docker/dockerfile.identify
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./log/identify.log
     ports:
       - 50000:50000
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   webserver:
     restart: on-failure:5
     build:
@@ -72,10 +96,14 @@ services:
       dockerfile: ./docker/dockerfile.webserver
       network: host
     # network_mode: host
+    environment:
+      - VEHICLE_IDENTIFICATION_LOGFILE=./log/webserver.log
     ports:
       - 8080:8080
     volumes:
-      - E:\repos\vehicle-identification\config:/usr/run/VehicleIdentification/config
+      - ..\config:/usr/run/VehicleIdentification/config
+      - ..\log:/usr/run/VehicleIdentification/log
+      - ..\data:/usr/run/VehicleIdentification/data
   # vehicleidentification_main:
   #   build:
   #     context: ..

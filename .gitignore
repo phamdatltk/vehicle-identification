@@ -6,3 +6,4 @@ config
 *.pth
 *.pt
 !trained_models/*.pth
+log

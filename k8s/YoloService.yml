@@ -48,9 +48,18 @@ spec:
       containers:
       - name: vehicleidentify-yolo
         image: jerapiblannett/vehicleidentify-yolo:latest
+        env:
+        - name: VEHICLE_IDENTIFICATION_LOGFILE
+          value: ./log/yolo.log
         ports:
         - containerPort: 32052
         volumeMounts:
+        - name: vehicleidentify-storage
+          mountPath: "/usr/run/VehicleIdentification"
+          subPath: data
+        - name: vehicleidentify-storage
+          mountPath: "/usr/run/VehicleIdentification"
+          subPath: log
         - name: yolo-config
           mountPath: "/usr/run/VehicleIdentification/config"
       - name: telegraf-agent
@@ -61,6 +70,9 @@ spec:
         - name: telegraf-config
           mountPath: "/etc/telegraf"
       volumes:
+      - name: vehicleidentify-storage
+        persistentVolumeClaim:
+          claimName: vehicleidentify-claim
       - name: telegraf-config
         configMap:
           name: telegraf-config

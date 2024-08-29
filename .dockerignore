@@ -5,4 +5,8 @@ config
 .env_dev
 *.pth
 *.pt
+log
+docker
+k8s
+.old
 # !wpodnet.pth

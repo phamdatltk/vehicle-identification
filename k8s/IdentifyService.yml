@@ -54,9 +54,18 @@ spec:
       containers:
       - name: vehicleidentify-identify
         image: jerapiblannett/vehicleidentify-identify:latest
+        env:
+        - name: VEHICLE_IDENTIFICATION_LOGFILE
+          value: ./log/identify.log
         ports:
         - containerPort: 32050
         volumeMounts:
+        - name: vehicleidentify-storage
+          mountPath: "/usr/run/VehicleIdentification"
+          subPath: data
+        - name: vehicleidentify-storage
+          mountPath: "/usr/run/VehicleIdentification"
+          subPath: log
         - name: identify-config
           mountPath: "/usr/run/VehicleIdentification/config"
       - name: telegraf-agent
@@ -67,6 +76,9 @@ spec:
         - name: telegraf-config
           mountPath: "/etc/telegraf"
       volumes:
+      - name: vehicleidentify-storage
+        persistentVolumeClaim:
+          claimName: vehicleidentify-claim
       - name: telegraf-config
         configMap:
           name: telegraf-config
