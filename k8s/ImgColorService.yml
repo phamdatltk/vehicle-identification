@@ -40,7 +40,7 @@ spec:
     matchLabels:
       app: vehicleidentify-imgcolor
   serviceName: vehicleidentify-imgcolor
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:

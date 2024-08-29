@@ -40,7 +40,7 @@ spec:
     matchLabels:
       app: vehicleidentify-platecrop
   serviceName: vehicleidentify-platecrop
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:

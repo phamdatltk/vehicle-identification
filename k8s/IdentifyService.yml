@@ -47,7 +47,7 @@ spec:
     matchLabels:
       app: vehicleidentify-identify
   serviceName: vehicleidentify-identify
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
