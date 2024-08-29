@@ -24,7 +24,7 @@ def logger_handler():
         },
         style="{",
     )
-    # check if VIDGEAR_LOGFILE defined
+    # check if VEHICLE_IDENTIFICATION_LOGFILE defined
     file_mode = os.environ.get("VEHICLE_IDENTIFICATION_LOGFILE", False)
     # define handler
     handler = log.StreamHandler()
@@ -34,7 +34,7 @@ def logger_handler():
             os.path.dirname(file_path), os.W_OK
         ):
             file_path = (
-                os.path.join(file_path, "vidgear.log")
+                os.path.join(file_path, "vehicleidentify.log")
                 if os.path.isdir(file_path)
                 else file_path
             )
