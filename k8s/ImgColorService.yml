@@ -5,6 +5,8 @@ metadata:
   namespace: j12t-alpha
 data:
   ImgColorService.yml: |
+    debug: True
+    n_threads: 16
     insecure_ports:
       - "[::]:32055"
 ---

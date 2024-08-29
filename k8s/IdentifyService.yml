@@ -5,6 +5,9 @@ metadata:
   namespace: j12t-alpha
 data:
   IdentifyService.yml: |
+    debug: True
+    n_threads: 16
+    
     imgresize_channel: "vehicleidentify-identify.j12t-alpha.svc.cluster.local:32051"
     yolo_channel: "vehicleidentify-yolo.j12t-alpha.svc.cluster.local:32052"
     platecrop_channel: "vehicleidentify-platecrop.j12t-alpha.svc.cluster.local:32053"
