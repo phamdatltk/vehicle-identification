@@ -4,7 +4,7 @@ metadata:
   name: webserver-config
   namespace: j12t-alpha
 data:
-  IdentifyService.yml: |
+  WebServer.yml: |
     dev: False
     n_threads: 16
     host: "0.0.0.0"
