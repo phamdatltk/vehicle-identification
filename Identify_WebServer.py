@@ -93,7 +93,7 @@ def feed(src, quality, noskip):
     input_stream_options["STREAM_RESOLUTION"] = quality
     input_stream_options["THREADED_QUEUE_MODE"] = bool(int(noskip))
     start_time = time.time()
-    capture = vidgear.gears.CamGear(src, stream_mode=True, logging=False, **input_stream_options).start()
+    capture = vidgear.gears.CamGear(src, stream_mode=True, logging=True, **input_stream_options).start()
     while True:
         diff_time = time.time() - start_time
         if diff_time > 60:
