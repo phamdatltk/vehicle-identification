@@ -8,6 +8,7 @@ RUN python3 -m pip install --upgrade pip setuptools wheel
 RUN pip install pyyaml grpcio grpcio-tools pillow==9.5.0 mkl-service==2.4.1 numpy webcolors opencv-python --break-system-packages
 
 RUN pip install easyocr --break-system-packages
+RUN pip install colorlog --break-system-packages
 
 FROM base AS stage1
 

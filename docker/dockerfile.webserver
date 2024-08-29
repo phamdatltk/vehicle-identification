@@ -8,7 +8,8 @@ RUN python3 -m pip install --upgrade pip setuptools wheel
 RUN pip install pyyaml grpcio grpcio-tools pillow==9.5.0 mkl-service==2.4.1 numpy webcolors opencv-python --break-system-packages
 
 RUN pip install yt_dlp lapx>=0.5.2 --break-system-packages
-RUN pip install flask vidgear --break-system-packages
+RUN pip install colorlog --break-system-packages
+RUN pip install flask waitress vidgear --break-system-packages
 
 FROM base AS stage1
 

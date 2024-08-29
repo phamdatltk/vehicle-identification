@@ -14,6 +14,8 @@ import yaml
 
 from flask import Flask, Response, request, render_template, render_template_string
 from urllib.parse import unquote
+from waitress import serve
+import logging
 
 import protos.imgresize_pb2_grpc as imgresize_pb2_grpc
 import protos.imgresize_pb2 as imgresize_pb2
@@ -31,11 +33,21 @@ import protos.identify_pb2_grpc as identify_pb2_grpc
 import protos.identify_pb2 as identify_pb2
 
 from utills import drawText, bts_to_img, image_to_bts, is_number
+from logger import GetLogger, logger_handler
 
+exec_name = os.path.basename(__file__)
+logging.basicConfig(handlers=[logger_handler()])
+log = logging.getLogger(exec_name)
+log.setLevel(logging.DEBUG)
+
+CONFIG_FILE = "./config/WebServer.yml"
+log.info(f"Reading config file: {CONFIG_FILE}")
 config = None
-with open("./config/WebServer.yml", "rt") as f:
+with open(CONFIG_FILE, "rt") as f:
     config = yaml.load(f, Loader=yaml.loader.SafeLoader)
-    
+log.setLevel(logging.DEBUG if config["debug"] else logging.INFO)
+log.debug(f"Config: {config}")
+
 IDENTIFY_CHANNEL = config["identify_channel"]
 
 identify_stub = identify_pb2_grpc.IdentifyStub(
@@ -135,10 +147,20 @@ def stream():
     )
 
 if __name__=="__main__":
-    app.run(
-        host=config["host"],
-        port=config["port"],
-        debug=config["debug"],
-        threaded=config["threaded"],
-        use_reloader=config["use_reloader"]
-    )
+    log.info(f"[WebServer] {config['host']}:{config['port']} n_threads={config['n_threads']}")
+    if config["dev"]:
+        log.info("Runing in DEV mode !!!")
+        app.run(
+            host=config["host"],
+            port=config["port"],
+            debug=config["debug"],
+            threaded=config["threaded"],
+            use_reloader=config["use_reloader"]
+        )
+    else:
+        serve(
+            app,
+            host=config["host"],
+            port=config["port"],
+            threads=config["n_threads"]
+        )
