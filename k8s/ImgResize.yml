@@ -21,7 +21,7 @@ spec:
   ports:
   - port: 32051
     targetPort: 32051
-    # nodePort: 32051
+    nodePort: 32051
     name: vehicleidentify-imgresize
   - port: 9126
     targetPort: 9126

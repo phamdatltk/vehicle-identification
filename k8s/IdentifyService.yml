@@ -8,7 +8,7 @@ data:
     debug: True
     n_threads: 16
     
-    imgresize_channel: "vehicleidentify-identify.j12t-alpha.svc.cluster.local:32051"
+    imgresize_channel: "vehicleidentify-imgresize.j12t-alpha.svc.cluster.local:32051"
     yolo_channel: "vehicleidentify-yolo.j12t-alpha.svc.cluster.local:32052"
     platecrop_channel: "vehicleidentify-platecrop.j12t-alpha.svc.cluster.local:32053"
     ocr_channel: "vehicleidentify-ocr.j12t-alpha.svc.cluster.local:32054"
@@ -28,7 +28,7 @@ spec:
   ports:
   - port: 32050
     targetPort: 32050
-    # nodePort: 32050
+    nodePort: 32050
     name: vehicleidentify-identify
   - port: 9126
     targetPort: 9126

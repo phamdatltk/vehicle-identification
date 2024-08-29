@@ -21,7 +21,7 @@ spec:
   ports:
   - port: 32055
     targetPort: 32055
-    # nodePort: 32055
+    nodePort: 32055
     name: vehicleidentify-imgcolor
   - port: 9126
     targetPort: 9126

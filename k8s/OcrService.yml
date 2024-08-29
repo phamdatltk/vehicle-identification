@@ -21,7 +21,7 @@ spec:
   ports:
   - port: 32054
     targetPort: 32054
-    # nodePort: 32054
+    nodePort: 32054
     name: vehicleidentify-ocr
   - port: 9126
     targetPort: 9126

@@ -21,7 +21,7 @@ spec:
   ports:
   - port: 32053
     targetPort: 32053
-    # nodePort: 32053
+    nodePort: 32053
     name: vehicleidentify-platecrop
   - port: 9126
     targetPort: 9126

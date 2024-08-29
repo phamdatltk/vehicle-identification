@@ -21,7 +21,7 @@ spec:
   ports:
   - port: 32052
     targetPort: 32052
-    # nodePort: 32052
+    nodePort: 32052
     name: vehicleidentify-yolo
   - port: 9126
     targetPort: 9126
