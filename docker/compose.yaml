@@ -98,6 +98,7 @@ services:
     # network_mode: host
     environment:
       - VEHICLE_IDENTIFICATION_LOGFILE=./log/webserver.log
+      - VIDGEAR_LOGFILE:./log/webserver.log
     ports:
       - 8080:8080
     volumes:

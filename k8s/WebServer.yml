@@ -54,6 +54,8 @@ spec:
         env:
         - name: VEHICLE_IDENTIFICATION_LOGFILE
           value: ./log/webserver.log
+        - name: VIDGEAR_LOGFILE
+          value: ./log/webserver.log
         ports:
         - containerPort: 32050
         volumeMounts:
