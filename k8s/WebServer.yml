@@ -59,7 +59,7 @@ spec:
         - name: VIDGEAR_LOGFILE
           value: ./log/webserver.log
         ports:
-        - containerPort: 32050
+        - containerPort: 8080
         volumeMounts:
         - name: vehicleidentify-storage
           mountPath: "/usr/run/VehicleIdentification/data"
