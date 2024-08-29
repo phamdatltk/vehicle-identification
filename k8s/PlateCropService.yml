@@ -57,10 +57,10 @@ spec:
         - containerPort: 32053
         volumeMounts:
         - name: vehicleidentify-storage
-          mountPath: "/usr/run/VehicleIdentification"
+          mountPath: "/usr/run/VehicleIdentification/data"
           subPath: data
         - name: vehicleidentify-storage
-          mountPath: "/usr/run/VehicleIdentification"
+          mountPath: "/usr/run/VehicleIdentification/log"
           subPath: log
         - name: platecrop-config
           mountPath: "/usr/run/VehicleIdentification/config"
