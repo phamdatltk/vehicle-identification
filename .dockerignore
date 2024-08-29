@@ -9,4 +9,6 @@ log
 docker
 k8s
 .old
+.git
+.vscode
 # !wpodnet.pth
