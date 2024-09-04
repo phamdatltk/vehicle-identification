@@ -94,6 +94,18 @@ API list:
 | [/api/identify](#post-apiidentify)                                             | POST   | image/*              | image/png                                 |
 | [/stream?url=`{{url}}`&quality=`{{quality}}`&noskip=`{{noskip}}`](#get-stream) | GET    | None                 | multipart/x-mixed-replace; boundary=frame |
 
+<details close>
+
+<summary> Parameters of <code>/stream</code> endpoint </summary>
+
+- `url` must be encoded. Use online tools to encode URLs, *i.e. [urlencoder.io](https://www.urlencoder.io/)*
+
+- `quality` can be either `360p`, `480p` (default), `720p`, `1080p`. Any value higher can cause stability issues.
+
+- `noskip` can be either `0` or `1` (default). If `noskip=1`, process every frame from the source video, otherwise allow dropping frames.
+
+</details>
+
 ## Sequence diagrams
 
 ### `GET: /`
