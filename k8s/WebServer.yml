@@ -7,6 +7,7 @@ data:
   WebServer.yml: |
     dev: False
     n_threads: 16
+    n_workers: 128
     host: "0.0.0.0"
     port: "8080"
     debug: true
