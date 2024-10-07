@@ -47,6 +47,8 @@ spec:
         app: vehicleidentify-platecrop
     spec:
       terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: dockerhub-secret
       containers:
       - name: vehicleidentify-platecrop
         image: jerapiblannett/vehicleidentify-platecrop:latest

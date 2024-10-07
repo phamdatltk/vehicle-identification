@@ -54,6 +54,8 @@ spec:
         app: vehicleidentify-identify
     spec:
       terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: dockerhub-secret
       containers:
       - name: vehicleidentify-identify
         image: jerapiblannett/vehicleidentify-identify:latest

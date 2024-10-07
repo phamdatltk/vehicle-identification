@@ -47,6 +47,8 @@ spec:
         app: vehicleidentify-yolo
     spec:
       terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: dockerhub-secret
       containers:
       - name: vehicleidentify-yolo
         image: jerapiblannett/vehicleidentify-yolo:latest

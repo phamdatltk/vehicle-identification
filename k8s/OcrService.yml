@@ -47,6 +47,8 @@ spec:
         app: vehicleidentify-ocr
     spec:
       terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: dockerhub-secret
       containers:
       - name: vehicleidentify-ocr
         image: jerapiblannett/vehicleidentify-ocr:latest

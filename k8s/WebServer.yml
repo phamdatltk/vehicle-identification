@@ -51,6 +51,8 @@ spec:
         app: vehicleidentify-webserver
     spec:
       terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: dockerhub-secret
       containers:
       - name: vehicleidentify-webserver
         image: jerapiblannett/vehicleidentify-webserver:latest
