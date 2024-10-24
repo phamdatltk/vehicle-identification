@@ -12,3 +12,4 @@ k8s
 .git
 .vscode
 # !wpodnet.pth
+venv

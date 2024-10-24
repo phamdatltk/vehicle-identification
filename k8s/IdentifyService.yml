@@ -58,7 +58,7 @@ spec:
       - name: dockerhub-secret
       containers:
       - name: vehicleidentify-identify
-        image: jerapiblannett/vehicleidentify-identify:latest
+        image: henrypham2801/identify_datpt
         env:
         - name: VEHICLE_IDENTIFICATION_LOGFILE
           value: ./log/identify.log

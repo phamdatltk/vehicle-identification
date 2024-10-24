@@ -125,11 +125,15 @@ def hello_world():
     
 @app.route("/api/identify", methods=["POST"])
 def identify():
+    start_time_total = time.perf_counter()
     data = request.data
     img = np.asarray(bytearray(data))
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
     img = IdentifyImage(img)
     _, img = cv2.imencode('.png', img)
+    end_time_total = time.perf_counter()
+    elapsed_time_total = round((end_time_total - start_time_total) * 1000, 2)
+    log.info(f"TOTAL TIME WEB SERVER: {elapsed_time_total} ms")
     return Response(img.tobytes(), status=200, content_type='image/png')
     
 @app.route("/stream")

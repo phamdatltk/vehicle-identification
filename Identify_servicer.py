@@ -8,6 +8,7 @@ import math
 import grpc
 import yaml
 import logging
+import time
 
 import protos.imgresize_pb2_grpc as imgresize_pb2_grpc
 import protos.imgresize_pb2 as imgresize_pb2
@@ -66,15 +67,26 @@ imgcolor_stub = imgcolor_pb2_grpc.ImgColorStub(
 
 class IdentifyServicer(identify_pb2_grpc.IdentifyServicer):
     def Identify(self, request, context):
+        start_time_total = time.perf_counter()
         # Unpack image
         img_str = request.data
         img = bts_to_img(img_str)
         # Resize
         (h, w) = img.shape[:2]
+        start_time_resize = time.perf_counter()
         imgresize_response = imgresize_stub.To480p(types_pb2.Image(data=image_to_bts(img)))
+        end_time_resize = time.perf_counter()
+        elapsed_time_resize = round((end_time_resize - start_time_resize) * 1000, 2)
+        log.info(f"TOTAL TIME RESIZE: {elapsed_time_resize} ms")
+    
+        
         tmp_img = bts_to_img(imgresize_response.data)
         # Detect boxes
+        start_time = time.perf_counter()
         yolo_response = yolo_stub.Detect(types_pb2.Image(data=image_to_bts(tmp_img)))
+        elapsed_time = round((time.perf_counter() - start_time) * 1000, 2)
+        log.info(f"TOTAL TIME YOLO: {elapsed_time} ms")
+        
         boxes = yolo_response.boxes
         # Crop to boxes
         box_ids = []
@@ -97,6 +109,9 @@ class IdentifyServicer(identify_pb2_grpc.IdentifyServicer):
         # Extract plates
         plate_imgs = []
         box_colors = []
+        
+        
+        start_time = time.perf_counter()
         for box_img in box_imgs:
             # print(box_img)
             request_img = types_pb2.Image(data=image_to_bts(box_img))
@@ -104,13 +119,20 @@ class IdentifyServicer(identify_pb2_grpc.IdentifyServicer):
             imgcolor_response = imgcolor_stub.GetPrimaryColors(request_img)
             plate_imgs.append(bts_to_img(platecrop_response.data))
             box_colors.append(",".join(list(imgcolor_response.text)))
+        elapsed_time = round((time.perf_counter() - start_time) * 1000, 2)
+        log.info(f"TOTAL TIME PLATECROP: {elapsed_time} ms")
+        
         # Read text (ocr)
+        start_time = time.perf_counter()
         vehicle_ids = []
         for plate_img in plate_imgs:
             platecrop_response = ocr_stub.ReadText(types_pb2.Image(data=image_to_bts(plate_img)))
             texts = platecrop_response.text
             vehicle_id = "#".join(texts)
             vehicle_ids.append(vehicle_id)
+        elapsed_time = round((time.perf_counter() - start_time) * 1000, 2)
+        log.info(f"TOTAL TIME OCR: {elapsed_time} ms")
+
         # Return response
         result = list()
         for i in range(len(boxes)):
@@ -128,6 +150,10 @@ class IdentifyServicer(identify_pb2_grpc.IdentifyServicer):
         response = types_pb2.VehicleIdentifyResult(
             vehicles=result
         )
+        end_time_total = time.perf_counter()
+        elapsed_time_total = round((end_time_total - start_time_total) * 1000, 2)
+        log.info(f"TOTAL TIME IDENTIFY: {elapsed_time_total} ms")
+
         return response
 
 def serve(silent:bool):
