@@ -13,6 +13,7 @@ data:
     platecrop_channel: "vehicleidentify-platecrop.j12t-alpha.svc.cluster.local:32053"
     ocr_channel: "vehicleidentify-ocr.j12t-alpha.svc.cluster.local:32054"
     imgcolor_channel: "vehicleidentify-imgcolor.j12t-alpha.svc.cluster.local:32055"
+    prometheus_endpoint: "http://victoria-metrics.j12t-alpha.svc.cluster.local:8428"
 
     insecure_ports:
       - "[::]:32050"

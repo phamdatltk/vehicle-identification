@@ -11,6 +11,7 @@ import time
 import numpy as np
 import multiprocessing as mp
 import yaml
+import requests
 
 from flask import Flask, Response, request, render_template, render_template_string
 from urllib.parse import unquote
@@ -49,6 +50,7 @@ log.setLevel(logging.DEBUG if config["debug"] else logging.INFO)
 log.debug(f"Config: {config}")
 
 IDENTIFY_CHANNEL = config["identify_channel"]
+PROMETHEUS_SERVER = config["prometheus_endpoint"]
 
 identify_stub = identify_pb2_grpc.IdentifyStub(
     grpc.insecure_channel(IDENTIFY_CHANNEL)
@@ -61,7 +63,33 @@ input_stream_options = {
     'THREADED_QUEUE_MODE': True
 }
 
+def send_metric(metric_name, metric_value, victoria_endpoint):
+    """
+    Gửi thông tin biến lên VictoriaMetrics.
+
+    Parameters:
+    metric_name (str): Tên của metric.
+    metric_value (float): Giá trị của metric.
+    victoria_endpoint (str): URL endpoint của VictoriaMetrics.
+    """
+    try:
+        # Định dạng dữ liệu theo Prometheus format
+        metric_data = f'{metric_name} {metric_value}\n'
+        response = requests.post(f"{victoria_endpoint}/api/v1/import/prometheus", data=metric_data)
+        
+        # Kiểm tra xem request có thành công không
+        if response.status_code == 200 or response.status_code == 204:
+            log.info(f"Metric '{metric_name}' được gửi thành công.")
+        else:
+            log.error(f"Lỗi khi gửi metric: {response.status_code} - {response.text}")
+    
+    except Exception as e:
+        log.error(f"Lỗi khi gửi metric: {e}")
+
+
+
 def IdentifyImage(frame:np.ndarray) -> np.ndarray:
+    start_time_total = time.perf_counter()
     dtr = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")    
     st = time.perf_counter()
     frame_str = image_to_bts(frame)
@@ -87,6 +115,10 @@ def IdentifyImage(frame:np.ndarray) -> np.ndarray:
         text_position=(0,0), 
         text_color=(255,0,0)
     )
+    end_time_total = time.perf_counter()
+    elapsed_time_total = round((end_time_total - start_time_total) * 1000, 2)
+    log.info(f"TOTAL TIME: {elapsed_time_total} ms")
+    send_metric('total_time',elapsed_time_total, PROMETHEUS_SERVER)
     return frame
 
 def feed(src, quality, noskip):
@@ -125,15 +157,11 @@ def hello_world():
     
 @app.route("/api/identify", methods=["POST"])
 def identify():
-    start_time_total = time.perf_counter()
     data = request.data
     img = np.asarray(bytearray(data))
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
     img = IdentifyImage(img)
     _, img = cv2.imencode('.png', img)
-    end_time_total = time.perf_counter()
-    elapsed_time_total = round((end_time_total - start_time_total) * 1000, 2)
-    log.info(f"TOTAL TIME WEB SERVER: {elapsed_time_total} ms")
     return Response(img.tobytes(), status=200, content_type='image/png')
     
 @app.route("/stream")
